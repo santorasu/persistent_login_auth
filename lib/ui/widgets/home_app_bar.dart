@@ -4,8 +4,8 @@ import '../controllers/auth_controller.dart';
 import '../screens/login_screen.dart';
 import '../screens/update_profile_screen.dart';
 
-class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const TMAppBar({
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const HomeAppBar({
     super.key,
     this.fromProfileScreen,
   });
