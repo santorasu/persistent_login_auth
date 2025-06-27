@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_management/ui/widgets/tm_app_bar.dart';
+import 'package:task_management/ui/widgets/home_app_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TMAppBar(),
+      appBar: HomeAppBar(),
       body: Column(
         children: [
           Text("data"),
