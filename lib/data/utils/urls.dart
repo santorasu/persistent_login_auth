@@ -4,26 +4,5 @@ class Urls{
   static const String loginUrl = '$_baseUrl/Login';
   static const String updateProfileUrl = '$_baseUrl/ProfileUpdate';
   static final profileDetailsUrl = '$_baseUrl/ProfileDetails';
-  static const String createTaskUrl = '$_baseUrl/createTask';
-  static const String taskStatusCountUrl = '$_baseUrl/taskStatusCount';
-  static const String newTaskListUrl = '$_baseUrl/listTaskByStatus/New';
-  static const String progressTaskListUrl = '$_baseUrl/listTaskByStatus/Progress';
-  static const String completedTaskListUrl = '$_baseUrl/listTaskByStatus/Completed';
-  static const String cancelledTaskListUrl = '$_baseUrl/listTaskByStatus/Cancelled';
-
-  static String updateTaskStatusUrl(String taskId, String status) =>
-      '$_baseUrl/updateTaskStatus/$taskId/$status';
-  static String deleteTaskUrl(String taskId) => '$_baseUrl/deleteTask/$taskId';
-
-  static const String recoverResetPasswordUrl = '$_baseUrl/RecoverResetPassword';
-  static  recoverVerifyEmailUrl (email) {
-   return '$_baseUrl/RecoverVerifyEmail/$email';
-  }
-
-
-  static otpVerifyUrl({email, otp}) {
-    return '$_baseUrl/RecoverVerifyOtp/$email/$otp';
-  }
-
 
 }

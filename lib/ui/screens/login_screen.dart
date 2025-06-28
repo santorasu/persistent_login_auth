@@ -7,9 +7,7 @@ import 'package:task_management/ui/screens/home_page.dart';
 import 'package:task_management/ui/screens/register_screen.dart';
 import 'package:task_management/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_management/ui/widgets/screen_background.dart';
-
 import '../widgets/snack_bar_message.dart';
-import 'forgot_password_verify_email_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,12 +17,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final LoginController _loginController = Get.find<LoginController>();
 
-  bool _passwordVisible = false;
+  final LoginController _loginController = Get.find<LoginController>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final TextEditingController _emailTEController;
+  late final TextEditingController _passwordTEController;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailTEController = TextEditingController(text: _loginController.email.value);
+    _passwordTEController = TextEditingController(text: _loginController.password.value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,109 +38,105 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 80),
-                Text(
-                  "Get Started with",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                SizedBox(height: 24),
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  textInputAction: TextInputAction.next,
-                  controller: _emailTEController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(hintText: 'Email'),
-                  validator: (String? value) {
-                    String email = value?.trim() ?? '';
-                    if (EmailValidator.validate(email) == false) {
-                      return 'Enter a valid Email';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 8),
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: _passwordTEController,
-                  obscureText: !_passwordVisible,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _passwordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _passwordVisible =
-                              !_passwordVisible;
-                        });
-                      },
-                    ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 80),
+                  Text(
+                    "Get Started with",
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  validator: (String? value) {
-                    if ((value?.isEmpty ?? true) || (value!.length < 6)) {
-                      return 'Enter your password more than 6 characters';
-                    }
-                    return null;
-                  },
-                ),
-
-                SizedBox(height: 16),
-                GetBuilder<LoginController>(
-                  builder: (controller) {
-                    return Visibility(
-                      visible: controller.logInProgress == false,
-                      replacement: const CenteredCircularProgressIndicator(),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _emailTEController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(hintText: 'Email'),
+                    onChanged: (value) => _loginController.email.value = value,
+                    validator: (String? value) {
+                      if (!EmailValidator.validate(value ?? '')) {
+                        return 'Enter a valid Email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Obx(() => TextFormField(
+                    controller: _passwordTEController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    obscureText: !_loginController.passwordVisible.value,
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _loginController.passwordVisible.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          _loginController.togglePasswordVisibility();
+                        },
+                      ),
+                    ),
+                    onChanged: (value) => _loginController.password.value = value,
+                    validator: (String? value) {
+                      if ((value?.isEmpty ?? true) || (value!.length < 6)) {
+                        return 'Enter a password with 6+ characters';
+                      }
+                      return null;
+                    },
+                  )),
+                  const SizedBox(height: 16),
+                  Obx(() => Visibility(
+                    visible: !_loginController.logInProgress.value,
+                    replacement: const CenteredCircularProgressIndicator(),
+                    child: SizedBox(
+                      width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _onTapSignInButton,
                         child: const Icon(
                           Icons.arrow_circle_right_outlined,
-                          color: Colors.white,
-                          size: 24,
                         ),
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 16),
-                Center(
-                  child: Column(
-                    children: [
-                      TextButton(
-                        onPressed: _onTapForgotPasswordButton,
-                        child: Text("Forgot Password?"),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                          children: [
-                            TextSpan(text: "Don't have account? "),
-                            TextSpan(
-                              text: "Sign Up",
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              recognizer:
-                                  TapGestureRecognizer()
-                                    ..onTap = _onTapSignUpButton,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Column(
+                      children: [
+                        TextButton(
+                          onPressed: _onTapForgotPasswordButton,
+                          child: const Text("Forgot Password?"),
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                            children: [
+                              const TextSpan(text: "Don't have an account? "),
+                              TextSpan(
+                                text: "Sign Up",
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = _onTapSignUpButton,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -143,42 +144,30 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onTapSignInButton() {
+  void _onTapSignInButton() async {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
-      _login();
-    }
-  }
-
-  Future<void> _login() async {
-    final bool isSuccess = await _loginController.login(
-      _emailTEController.text.trim(),
-      _passwordTEController.text,
-    );
-    if (isSuccess) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-        (predicate) => false,
-      );
-    } else {
-      showSnackBarMessage(context, _loginController.errorMessage!, true);
+      final isSuccess = await _loginController.login();
+      if (mounted && isSuccess) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+              (predicate) => false,
+        );
+      } else if (mounted) {
+        showSnackBarMessage(context, _loginController.errorMessage!, true);
+      }
     }
   }
 
   void _onTapSignUpButton() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => RegisterScreen()),
+      MaterialPageRoute(builder: (context) =>  RegisterScreen()),
     );
   }
 
   void _onTapForgotPasswordButton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ForgotPasswordVerifyEmailScreen(),
-      ),
-    );
   }
 
   @override

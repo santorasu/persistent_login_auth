@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:task_management/ui/controllers/auth_controller.dart';
 import 'package:task_management/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:task_management/ui/widgets/screen_background.dart';
-import 'package:task_management/ui/widgets/tm_app_bar.dart';
+import 'package:task_management/ui/widgets/home_app_bar.dart';
 import '../../data/models/user_model.dart';
 import '../../data/service/network_client.dart';
 import '../../data/utils/urls.dart';
@@ -43,7 +43,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TMAppBar(
+      appBar: HomeAppBar(
         fromProfileScreen: true,
       ),
       body: ScreenBackground(
